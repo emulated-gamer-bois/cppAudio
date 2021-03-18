@@ -48,14 +48,14 @@ int main()
   std::int32_t sampleRate = 44100;
   std::uint8_t bitsPerSample = 8;
   ALsizei size = 3 * sampleRate;
-  /*auto soundData = load_wav("/home/molle/Documents/projects/cppAudio/Alesis-Fusion-Acoustic-Bass-C2.wav", channels, sampleRate, bitsPerSample, size);
+  auto soundData = load_wav("/home/molle/Documents/projects/cppAudio/Alesis-Fusion-Acoustic-Bass-C2.wav", channels, sampleRate, bitsPerSample, size);
   if(!soundData)
   {
     std::cerr << "ERROR: Could not load wav" << std::endl;
     return 0;
-  }*/
+  }
 
-  auto soundData = generateSine(sampleRate, size, 880.0);
+  //auto soundData = generateSine(sampleRate, size, 880.0);
 
   ALuint buffer;
   alGenBuffers(1, &buffer);
