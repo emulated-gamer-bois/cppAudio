@@ -2,6 +2,8 @@
 
 A small repo for checkoing out [openal-soft](https://github.com/kcat/openal-soft) which will be integrated with gameboy-emulator
 
+The OpenAL programmer guide can be found [here](https://www.openal.org/documentation/OpenAL_Programmers_Guide.pdf)
+
 # Setup
 
 ```
