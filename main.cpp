@@ -43,13 +43,13 @@ int main() {
     audio->init();
 
     double frequencies[] = {65.4, 82.4, 98.0};
-    for(int i = 0; i < 3; i++) {
-        for(int k = 0; k < 4; k++) {
+    for(int k = 0; k < 4; k++) {
+        for(int i = 0; i < 3; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(30));
-            audio->playSquare(k, 0b10, frequencies[k]);
+            audio->playSquare(i, 0b10, frequencies[i]);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
             audio->stopSource(i);
-            frequencies[k] *= 2;
+            frequencies[i] *= 2;
         }
     }
 

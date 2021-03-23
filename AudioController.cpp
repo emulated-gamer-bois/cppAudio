@@ -75,6 +75,7 @@ void AudioController::playSquare(int source, char duty, ALsizei frequency) {
     if(source > N_SOURCES || source < 0) return;
     if(getSourceStatus(source) == AL_PLAYING) return;
 
+    alSourcei(sources[source], AL_BUFFER, 0);
     alBufferData(
         buffers[source],
         AL_FORMAT_MONO8,
@@ -87,7 +88,7 @@ void AudioController::playSquare(int source, char duty, ALsizei frequency) {
 }
 
 void AudioController::playGBSquare(int source, char duty, unsigned short frequency) {
-    this->playSquare(source, duty, 131072.0/(2048 - frequency)); //0x7FF
+    this->playSquare(source, duty, 131072.0/(2048 - frequency));
 }
 
 AudioController::AudioController() {
@@ -97,7 +98,7 @@ AudioController::AudioController() {
     //-------------------------
     //0      00000001    12.5%
     //1      10000001    25%
-    //2      10000111  11110000    50%
+    //2      10000111    50%
     //3      01111110    75%
     //The waveforms are stretched out to SQUARE_SAMPLE_RATE number of bytes instead of 8 bits
 
@@ -118,5 +119,5 @@ AudioController::AudioController() {
     }
 }
 void AudioController::stopSource(int source) {
-    alSourceStop(sources[source]);
+    alSourceRewind(sources[source]);
 }
