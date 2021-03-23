@@ -60,6 +60,7 @@ void AudioController::playSound(int source, char *soundData, int size, int sampl
 
     alBufferData(buffers[source], AL_FORMAT_MONO8, soundData, size, sampleRate);
     alSourcei(sources[source], AL_BUFFER, buffers[source]);
+    alSourcei(sources[source], AL_LOOPING, 0);
     alSourcePlay(sources[source]);
 }
 
@@ -67,4 +68,53 @@ ALint AudioController::getSourceStatus(int source) {
     ALint state;
     alGetSourcei(sources[source], AL_SOURCE_STATE, &state);
     return state;
+}
+
+//Plays square wave sound
+void AudioController::playSquare(int source, char duty, unsigned short frequency) {
+    if(source > N_SOURCES || source < 0) return;
+    if(getSourceStatus(source) == AL_PLAYING) return;
+
+    alBufferData(
+        buffers[source],
+        AL_FORMAT_MONO8,
+        duties[duty],
+        SQUARE_SAMPLE_RATE,
+        SQUARE_SAMPLE_RATE * 131072/(2048 - (frequency & 0x7FF)));
+    alSourcei(sources[source], AL_BUFFER, buffers[source]);
+    alSourcei(sources[source], AL_LOOPING, 1);
+    alSourcePlay(sources[source]);
+}
+
+
+
+AudioController::AudioController() {
+
+    //Assigns default values to duties
+    //Duty   Waveform    Ratio
+    //-------------------------
+    //0      00000001    12.5%
+    //1      10000001    25%
+    //2      10000111    50%
+    //3      01111110    75%
+    //The waveforms are stretched out to SQUARE_SAMPLE_RATE number of bytes instead of 8 bits
+
+    const unsigned char dutyPatterns[4] = {0x01, 0x81, 0x87, 0x7E};
+    const int stepLength = SQUARE_SAMPLE_RATE / 8;
+    unsigned char value;
+    int j;
+
+    for(int i = 0; i < 4; i++) {
+        j = 0;
+        while(j < SQUARE_SAMPLE_RATE) {
+            value = ((dutyPatterns[i] >> (7 - (j / stepLength))) & 1) * 0xFF;
+            do {
+                duties[i][j] = value;
+                j++;
+            } while(j % stepLength);
+        }
+    }
+}
+void AudioController::stopSource(int source) {
+    alSourceStop(sources[source]);
 }
