@@ -71,7 +71,7 @@ ALint AudioController::getSourceStatus(int source) {
 }
 
 //Plays square wave sound
-void AudioController::playSquare(int source, char duty, unsigned short frequency) {
+void AudioController::playSquare(int source, char duty, ALsizei frequency) {
     if(source > N_SOURCES || source < 0) return;
     if(getSourceStatus(source) == AL_PLAYING) return;
 
@@ -80,13 +80,15 @@ void AudioController::playSquare(int source, char duty, unsigned short frequency
         AL_FORMAT_MONO8,
         duties[duty],
         SQUARE_SAMPLE_RATE,
-        SQUARE_SAMPLE_RATE * 131072/(2048 - (frequency & 0x7FF)));
+        SQUARE_SAMPLE_RATE * frequency);
     alSourcei(sources[source], AL_BUFFER, buffers[source]);
     alSourcei(sources[source], AL_LOOPING, 1);
     alSourcePlay(sources[source]);
 }
 
-
+void AudioController::playGBSquare(int source, char duty, unsigned short frequency) {
+    this->playSquare(source, duty, 131072.0/(2048 - frequency)); //0x7FF
+}
 
 AudioController::AudioController() {
 
@@ -95,7 +97,7 @@ AudioController::AudioController() {
     //-------------------------
     //0      00000001    12.5%
     //1      10000001    25%
-    //2      10000111    50%
+    //2      10000111  11110000    50%
     //3      01111110    75%
     //The waveforms are stretched out to SQUARE_SAMPLE_RATE number of bytes instead of 8 bits
 

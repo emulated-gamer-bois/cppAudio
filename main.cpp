@@ -42,12 +42,23 @@ int main() {
     std::unique_ptr<AudioController> audio = std::make_unique<AudioController>();
     audio->init();
 
+    double frequencies[] = {65.4, 82.4, 98.0};
+    for(int i = 0; i < 3; i++) {
+        for(int k = 0; k < 4; k++) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(30));
+            audio->playSquare(k, 0b10, frequencies[k]);
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            audio->stopSource(i);
+            frequencies[k] *= 2;
+        }
+    }
+
     //Plays the Game Boy boot sound, given the values provided by the boot rom
-    audio->playSquare(0, 2, 0x783);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    /*audio->playSquare(0, 2, 0x783);
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
     audio->stopSource(0);
-    audio->playSquare(1, 2, 0x7C1);
-    std::this_thread::sleep_for(std::chrono::milliseconds(600));
+    audio->playSquare(1, 2, 0x7FF);
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));*/
 
     return 0;
 }
